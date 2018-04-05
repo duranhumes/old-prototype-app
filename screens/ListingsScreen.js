@@ -1,29 +1,22 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
-import { Container, Tab, Tabs, ScrollableTab } from 'native-base';
+import { StyleSheet, Image } from 'react-native';
+import { Container, Tab, Tabs, ScrollableTab, Text } from 'native-base';
 
 import { Head } from '../components/common';
-import { Home, News, Events, Movies } from '../components/views';
 
-class HomeScreen extends Component {
+class ListingsScreen extends Component {
 	static navigationOptions = {
-		header: null,
+		title: null,
 	};
 
 	renderTabs = () => {
 		return (
 			<Tabs renderTabBar={() => <ScrollableTab />}>
-				<Tab heading="Home">
-					<Home />
+				<Tab heading="Results">
+					<Text>Results</Text>
 				</Tab>
-				<Tab heading="News">
-					<News />
-				</Tab>
-				<Tab heading="Events">
-					<Events />
-				</Tab>
-				<Tab heading="Movies">
-					<Movies />
+				<Tab heading="Listing">
+					<Text>Listing</Text>
 				</Tab>
 			</Tabs>
 		);
@@ -37,6 +30,7 @@ class HomeScreen extends Component {
 		);
 	}
 }
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -44,4 +38,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default HomeScreen;
+export default ListingsScreen;
