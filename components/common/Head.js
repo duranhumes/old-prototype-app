@@ -6,10 +6,10 @@ class Head extends Component {
 	render() {
 		return (
 			<Container style={styles.viewStyle}>
-				<Header>
-					<Image source={require('../../assets/images/logo.png')} style={{ width: 250, height: 45 }} />
+				<Header style={{ flexDirection: 'row', width: '75%', alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }}>
+					<Image source={require('../../assets/images/logo.png')} style={{ alignItems: 'center', width: 250, margin: 'auto', justifyContent: 'center', height: 45 }} />
 				</Header>
-				<Header searchBar rounded>
+				<Header searchBar>
 					<Item style={{ flex: 1 }}>
 						<Icon name="ios-search" />
 						<Input placeholder="Search" />

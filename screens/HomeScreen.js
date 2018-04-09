@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Container, Tab, Tabs, ScrollableTab } from 'native-base';
 
 import { Head } from '../components/common';
-import { Home, News, Events, Movies } from '../components/views';
+import { Home, News, Events, Movies } from '../components/views/home';
 
 class HomeScreen extends Component {
 	static navigationOptions = {

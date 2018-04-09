@@ -3,20 +3,21 @@ import { StyleSheet, Image } from 'react-native';
 import { Container, Tab, Tabs, ScrollableTab, Text } from 'native-base';
 
 import { Head } from '../components/common';
+import { Results, Listing } from '../components/views/listings';
 
 class ListingsScreen extends Component {
 	static navigationOptions = {
-		title: null,
+		header: null,
 	};
 
 	renderTabs = () => {
 		return (
 			<Tabs renderTabBar={() => <ScrollableTab />}>
 				<Tab heading="Results">
-					<Text>Results</Text>
+					<Results />
 				</Tab>
 				<Tab heading="Listing">
-					<Text>Listing</Text>
+					<Listing />
 				</Tab>
 			</Tabs>
 		);
