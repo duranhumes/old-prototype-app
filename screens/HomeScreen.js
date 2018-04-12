@@ -3,36 +3,21 @@ import { StyleSheet } from 'react-native';
 import { Container, Tab, Tabs, ScrollableTab } from 'native-base';
 
 import { Head } from '../components/common';
-import { Home, News, Events, Movies } from '../components/views/home';
+import { Home, ThingsToDo } from '../components/views/home';
 
 class HomeScreen extends Component {
 	static navigationOptions = {
 		header: null,
 	};
 
-	renderTabs = () => {
-		return (
-			<Tabs renderTabBar={() => <ScrollableTab />}>
-				<Tab heading="Home">
-					<Home />
-				</Tab>
-				<Tab heading="News">
-					<News />
-				</Tab>
-				<Tab heading="Events">
-					<Events />
-				</Tab>
-				<Tab heading="Movies">
-					<Movies />
-				</Tab>
-			</Tabs>
-		);
+	_renderTabs = () => {
+		return <Home />;
 	};
 
 	render() {
 		return (
 			<Container>
-				<Head tabs={this.renderTabs()} />
+				<Head tabs={this._renderTabs()} />
 			</Container>
 		);
 	}

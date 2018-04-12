@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-class Movies extends Component {
+class Alerts extends Component {
 	render() {
 		return (
 			<View>
-				<Text>Movies</Text>
+				<Text>Alerts</Text>
 			</View>
 		);
 	}
@@ -13,4 +13,4 @@ class Movies extends Component {
 
 const styles = StyleSheet.create({});
 
-export { Movies };
+export { Alerts };

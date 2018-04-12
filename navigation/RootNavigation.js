@@ -1,8 +1,10 @@
 import { Notifications } from 'expo';
 import React, { Component } from 'react';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, DrawerNavigator } from 'react-navigation';
+import { Text } from 'react-native';
 
 import MainTabNavigator from './MainTabNavigator';
+import MainDrawerNavigator from './MainDrawerNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 
 const RootStackNavigator = StackNavigator(
@@ -19,6 +21,26 @@ const RootStackNavigator = StackNavigator(
 		}),
 	}
 );
+
+// const Home = () => <Text>Home</Text>;
+
+// const RootStackNavigator = DrawerNavigator(
+// 	{
+// 		Main: {
+// 			screen: MainTabNavigator,
+// 		},
+// 		Home: {
+// 			screen: Home,
+// 		},
+// 	},
+// 	{
+// 		navigationOptions: () => ({
+// 			headerTitleStyle: {
+// 				fontWeight: 'normal',
+// 			},
+// 		}),
+// 	}
+// );
 
 class RootNavigator extends Component {
 	componentDidMount() {

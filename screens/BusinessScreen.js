@@ -3,21 +3,18 @@ import { StyleSheet, Image } from 'react-native';
 import { Container, Tab, Tabs, ScrollableTab, Text } from 'native-base';
 
 import { Head } from '../components/common';
-import { Results, Listing } from '../components/views/listings';
+import { Business } from '../components/views/business';
 
-class ListingsScreen extends Component {
+class BusinessScreen extends Component {
 	static navigationOptions = {
 		header: null,
 	};
 
-	renderTabs = () => {
+	_renderTabs = () => {
 		return (
 			<Tabs renderTabBar={() => <ScrollableTab />}>
-				<Tab heading="Results">
-					<Results />
-				</Tab>
-				<Tab heading="Listing">
-					<Listing />
+				<Tab heading="Business">
+					<Text>Business</Text>
 				</Tab>
 			</Tabs>
 		);
@@ -26,7 +23,7 @@ class ListingsScreen extends Component {
 	render() {
 		return (
 			<Container>
-				<Head tabs={this.renderTabs()} />
+				<Head tabs={this._renderTabs()} />
 			</Container>
 		);
 	}
@@ -39,4 +36,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default ListingsScreen;
+export default BusinessScreen;

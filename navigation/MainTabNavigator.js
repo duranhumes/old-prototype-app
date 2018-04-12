@@ -6,19 +6,27 @@ import { TabNavigator, TabBarBottom } from 'react-navigation';
 import Colors from '../constants/Colors';
 
 import HomeScreen from '../screens/HomeScreen';
-import ListingsScreen from '../screens/ListingsScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import NewsScreen from '../screens/NewsScreen';
+import SearchScreen from '../screens/SearchScreen';
+import BusinessScreen from '../screens/BusinessScreen';
+import EventsScreen from '../screens/EventsScreen';
 
 export default TabNavigator(
 	{
 		Home: {
 			screen: HomeScreen,
 		},
-		Listings: {
-			screen: ListingsScreen,
+		News: {
+			screen: NewsScreen,
 		},
-		Settings: {
-			screen: SettingsScreen,
+		Search: {
+			screen: SearchScreen,
+		},
+		Business: {
+			screen: BusinessScreen,
+		},
+		Events: {
+			screen: EventsScreen,
 		},
 	},
 	{
@@ -30,11 +38,17 @@ export default TabNavigator(
 					case 'Home':
 						iconName = Platform.OS === 'ios' ? `ios-home${focused ? '' : '-outline'}` : 'md-home';
 						break;
-					case 'Listings':
+					case 'News':
+						iconName = Platform.OS === 'ios' ? `ios-paper${focused ? '' : '-outline'}` : 'md-paper';
+						break;
+					case 'Search':
 						iconName = Platform.OS === 'ios' ? `ios-search${focused ? '' : '-outline'}` : 'md-search';
 						break;
-					case 'Settings':
-						iconName = Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options';
+					case 'Business':
+						iconName = Platform.OS === 'ios' ? `ios-briefcase${focused ? '' : '-outline'}` : 'md-briefcase';
+						break;
+					case 'Events':
+						iconName = Platform.OS === 'ios' ? `ios-calendar${focused ? '' : '-outline'}` : 'md-calendar';
 				}
 				return <Ionicons name={iconName} size={28} style={{ marginBottom: -3, width: 25 }} color={focused ? Colors.tabIconSelected : Colors.tabIconDefault} />;
 			},

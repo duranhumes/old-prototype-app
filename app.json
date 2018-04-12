@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "bahamaslocal-app",
+    "name": "app",
     "description": "A very interesting project.",
-    "slug": "bahamaslocal-app",
+    "slug": "app",
     "privacy": "public",
     "sdkVersion": "26.0.0",
     "platforms": ["ios", "android"],
@@ -21,7 +21,16 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+	    "infoPlist": {
+	        "NSLocationAlwaysUsageDescription" : "needs gps data.",
+	        "NSAppTransportSecurity" : {
+		          "NSAllowsArbitraryLoads" : true,
+		          "NSAllowsArbitraryLoadsForMedia": true,
+		          "NSAllowsArbitraryLoadsInWebContent": true,
+		          "NSExceptionAllowsInsecureHTTPLoads": true
+	        }
+    	}
     }
   }
 }

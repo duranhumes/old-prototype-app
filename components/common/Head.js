@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
-import { Container, Header, Button, Text, Icon, Item, Input, Tab, Tabs, ScrollableTab, Body, Left, Right } from 'native-base';
+import { Container, Header, Button, Text, Icon, H1, H2, Item, Input, Tab, Tabs, ScrollableTab, Body, Left, Right } from 'native-base';
 
 class Head extends Component {
 	render() {
 		return (
 			<Container style={styles.viewStyle}>
-				<Header style={{ flexDirection: 'row', width: '75%', alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }}>
-					<Image source={require('../../assets/images/logo.png')} style={{ alignItems: 'center', width: 250, margin: 'auto', justifyContent: 'center', height: 45 }} />
-				</Header>
-				<Header searchBar>
-					<Item style={{ flex: 1 }}>
-						<Icon name="ios-search" />
-						<Input placeholder="Search" />
-					</Item>
+				<Header>
+					<Left>
+						<Button transparent dark>
+							<Icon name="menu" />
+						</Button>
+					</Left>
+					<Body>
+						<H1>Local</H1>
+					</Body>
+					<Right>
+						<Button transparent dark>
+							<Icon name="cloud" />
+						</Button>
+					</Right>
 				</Header>
 				{this.props.tabs}
 			</Container>
@@ -25,7 +31,7 @@ const styles = StyleSheet.create({
 	viewStyle: {
 		height: 60,
 		display: 'flex',
-		paddingTop: 15,
+		// paddingTop: 15,
 		backgroundColor: '#f8f8f8',
 		shadowColor: '#000',
 		shadowOffset: { width: 0, height: 2 },
