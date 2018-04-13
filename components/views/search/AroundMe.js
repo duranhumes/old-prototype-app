@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Dimensions, Image, Animated, TouchableHighlight, Alert } from 'react-native';
-// import MapView from 'react-native-maps';
 import { Button, Picker, Form, Content, Icon } from 'native-base';
 import axios from 'axios';
 import { MapView, Constants, Location, Permissions } from 'expo';
@@ -8,11 +7,13 @@ import call from 'react-native-phone-call';
 
 const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 };
 
-const { width, height } = Dimensions.get('window');
+const VIEWPORT_WIDTH = Dimensions.get('window').width;
+const VIEWPORT_HEIGHT = Dimensions.get('window').height;
 
-const CARD_HEIGHT = height / 8;
+const CARD_HEIGHT = VIEWPORT_HEIGHT / 8;
 const CARD_WIDTH = CARD_HEIGHT * 2;
-const ASPECT_RATIO = width / height;
+// const CARD_WIDTH = VIEWPORT_WIDTH / 1.1;
+const ASPECT_RATIO = VIEWPORT_WIDTH / VIEWPORT_HEIGHT;
 const LATITUDE_DELTA = 0.005;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
@@ -40,10 +41,14 @@ class AroundMe extends Component {
 	}
 
 	componentDidMount() {
-		// We should detect when scrolling has stopped then animate
-		// We should just debounce the event listener here
+		this._animateToListing();
+	}
+
+	_animateToListing = () => {
+		// Detect when scrolling has stopped then animate and debounce the event listener
 		this.animation.addListener(({ value }) => {
-			let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+			// let index = Math.floor(value / CARD_WIDTH * 0.35);
+			let index = Math.floor(value / CARD_WIDTH * 0.25);
 			if (index >= this.state.markers.length) {
 				index = this.state.markers.length - 1;
 			}
@@ -66,24 +71,23 @@ class AroundMe extends Component {
 							latitudeDelta: this.state.region.latitudeDelta,
 							longitudeDelta: this.state.region.longitudeDelta,
 						},
-						350
+						250
 					);
 				}
 			}, 10);
 		});
 		Location.watchPositionAsync(GEOLOCATION_OPTIONS, this._updateUserLocation);
-	}
+	};
 
 	_getListings = async () => {
 		await this._findMe();
 		let { latitude, longitude } = this.state.region;
 		let { distance, category } = this.state;
 		let url = `https://duranhumes.com/api/mobile/listing_distance?category=${category}&dist=${distance}&userLat=${latitude}&userLng=${longitude}`;
-		await axios.get(url).then(({ data }) => this.setState({ markers: data }));
-
-		if (this.state.markers.length == 0) {
-			Alert.alert('Nothing found with those parameters');
-		}
+		await axios.get(url).then(({ data }) => {
+			if (data.length == 0) Alert.alert('Nothing found with those parameters');
+			this.setState({ markers: data });
+		});
 	};
 
 	_categoryChange = value => {
@@ -114,7 +118,7 @@ class AroundMe extends Component {
 				});
 			},
 			error => alert(JSON.stringify(error)),
-			{ enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+			GEOLOCATION_OPTIONS
 		);
 	};
 
@@ -144,26 +148,27 @@ class AroundMe extends Component {
 			const inputRange = [(index - 1) * CARD_WIDTH, index * CARD_WIDTH, (index + 1) * CARD_WIDTH];
 			const scale = this.animation.interpolate({
 				inputRange,
-				outputRange: [1, 2.5, 1],
+				outputRange: [1, 2, 1],
 				extrapolate: 'clamp',
 			});
 			const opacity = this.animation.interpolate({
 				inputRange,
-				outputRange: [0.35, 1, 0.35],
+				outputRange: [0.2, 1, 0.2],
 				extrapolate: 'clamp',
 			});
 			return { scale, opacity };
 		});
+		const { card, textContent, cardTitle, cardDescription, markerIcon, markerWrap, ring, calloutText, scrollView, endPadding, container, filters, mapButton } = styles;
 
 		return (
-			<View style={styles.container}>
-				<Form style={styles.filters}>
+			<View style={container}>
+				<Form style={filters}>
 					<Picker
 						mode="dropdown"
 						iosHeader="Select a category"
 						placeholder="Select a category"
 						iosIcon={<Icon name="ios-arrow-down-outline" />}
-						style={{ width: width / 1.75, marginRight: 10 }}
+						style={{ width: VIEWPORT_WIDTH / 1.75, marginRight: 10 }}
 						selectedValue={this.state.selectedCategory}
 						onValueChange={this._categoryChange}>
 						{this.state.categories.map(category => {
@@ -175,7 +180,7 @@ class AroundMe extends Component {
 						iosHeader="Select distance"
 						placeholder="Select distance"
 						iosIcon={<Icon name="ios-arrow-down-outline" />}
-						style={{ width: width / 2.6, marginLeft: 10 }}
+						style={{ width: VIEWPORT_WIDTH / 2.6, marginLeft: 10 }}
 						selectedValue={this.state.distance}
 						onValueChange={this._distanceChange}>
 						<Picker.Item label="1 Mile" value={1} />
@@ -184,18 +189,10 @@ class AroundMe extends Component {
 						<Picker.Item label="10 Miles" value={10} />
 					</Picker>
 				</Form>
-				<Button style={styles.mapButton} onPress={() => this._findMe()}>
+				<Button style={mapButton} onPress={() => this._findMe()}>
 					<Text style={{ fontWeight: 'bold', color: 'black' }}>Find Me</Text>
 				</Button>
-				<MapView
-					ref={map => (this.map = map)}
-					region={this.state.region}
-					showsUserLocation={true}
-					onRegionChange={this._updateUserLocation()}
-					showsMyLocationButton={true}
-					showCompass={true}
-					onUserLocationChange={() => console.log(this)}
-					style={styles.container}>
+				<MapView ref={map => (this.map = map)} region={this.state.region} showsUserLocation={true} onRegionChange={this._updateUserLocation()} style={container}>
 					{this.state.markers.map((marker, index) => {
 						const scaleStyle = {
 							transform: [
@@ -214,13 +211,13 @@ class AroundMe extends Component {
 						};
 						return (
 							<MapView.Marker key={index} coordinate={coordinate}>
-								<Animated.View style={[styles.markerWrap]}>
-									<Animated.View style={[styles.ring]} />
-									<View style={styles.marker} />
+								<Animated.View style={[markerWrap]}>
+									<Animated.View style={[ring]} />
+									<View style={markerIcon} />
 								</Animated.View>
 								<MapView.Callout>
 									<TouchableHighlight onPress={() => this.markerClick()} underlayColor="#dddddd">
-										<View style={styles.calloutText}>
+										<View style={calloutText}>
 											<Text numberOfLines={1}>{marker.title}</Text>
 											<Text numberOfLines={1}>{marker.address}</Text>
 											<Text numberOfLines={1}>{marker.phone_number}</Text>
@@ -248,24 +245,24 @@ class AroundMe extends Component {
 						],
 						{ useNativeDriver: true }
 					)}
-					style={styles.scrollView}
-					contentContainerStyle={styles.endPadding}>
+					style={scrollView}
+					contentContainerStyle={endPadding}>
 					{this.state.markers.map((marker, index) => {
-						const { phone_number } = marker;
+						const { phone_number, title, address } = marker;
 						return (
-							<View style={styles.card} key={index}>
-								<View style={styles.textContent}>
-									<Text numberOfLines={1} style={styles.cardtitle}>
-										{marker.title}
+							<TouchableHighlight style={card} key={index}>
+								<View style={textContent}>
+									<Text numberOfLines={1} style={cardTitle}>
+										{title}
 									</Text>
-									<Text numberOfLines={1} style={styles.cardDescription}>
-										{marker.address}
+									<Text numberOfLines={1} style={cardDescription}>
+										{address}
 									</Text>
-									<Button transparent value={marker.phone_number} onPress={() => this._handleCall(phone_number)}>
-										<Text style={styles.cardDescription}>{marker.phone_number}</Text>
+									<Button transparent value={phone_number} onPress={() => this._handleCall(phone_number)}>
+										<Text style={cardDescription}>{phone_number}</Text>
 									</Button>
 								</View>
-							</View>
+							</TouchableHighlight>
 						);
 					})}
 				</Animated.ScrollView>
@@ -286,7 +283,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 10,
 	},
 	endPadding: {
-		paddingRight: width - CARD_WIDTH,
+		paddingRight: VIEWPORT_WIDTH - CARD_WIDTH,
 	},
 	card: {
 		padding: 10,
@@ -297,6 +294,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 5,
 		shadowOpacity: 0.3,
 		shadowOffset: { x: 2, y: -2 },
+		elevation: 2,
 		height: CARD_HEIGHT,
 		width: CARD_WIDTH,
 		overflow: 'hidden',
@@ -304,7 +302,7 @@ const styles = StyleSheet.create({
 	textContent: {
 		flex: 1,
 	},
-	cardtitle: {
+	cardTitle: {
 		fontSize: 12,
 		marginTop: 5,
 		fontWeight: 'bold',
@@ -317,7 +315,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
-	marker: {
+	markerIcon: {
 		width: 8,
 		height: 8,
 		borderRadius: 4,
@@ -340,7 +338,7 @@ const styles = StyleSheet.create({
 		paddingLeft: 5,
 	},
 	mapButton: {
-		width,
+		width: VIEWPORT_WIDTH,
 		height: 50,
 		backgroundColor: 'rgba(252, 253, 253, 0.9)',
 		justifyContent: 'center',
@@ -350,7 +348,7 @@ const styles = StyleSheet.create({
 		zIndex: 12,
 	},
 	filters: {
-		width,
+		width: VIEWPORT_WIDTH,
 		flexDirection: 'row',
 		backgroundColor: 'rgba(252, 253, 253, 0.9)',
 		shadowColor: 'black',

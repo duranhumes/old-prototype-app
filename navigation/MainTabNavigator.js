@@ -1,26 +1,68 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { TabNavigator, TabBarBottom } from 'react-navigation';
+import { TabNavigator, TabBarBottom, StackNavigator, DrawerNavigator } from 'react-navigation';
 
 import Colors from '../constants/Colors';
 
 import HomeScreen from '../screens/HomeScreen';
 import NewsScreen from '../screens/NewsScreen';
+import PostScreen from '../screens/PostScreen';
 import SearchScreen from '../screens/SearchScreen';
 import BusinessScreen from '../screens/BusinessScreen';
 import EventsScreen from '../screens/EventsScreen';
+import ListingScreen from '../screens/ListingScreen';
+
+const NewsNavigation = StackNavigator({
+	News: {
+		screen: NewsScreen,
+	},
+	Post: {
+		screen: PostScreen,
+	},
+});
+
+const SearchNavigation = StackNavigator({
+	Search: {
+		screen: SearchScreen,
+	},
+	Listing: {
+		screen: ListingScreen,
+	},
+});
+
+const DrawerNavigation = DrawerNavigator({
+	Home: {
+		screen: HomeScreen,
+	},
+	News: {
+		screen: NewsNavigation,
+	},
+	Search: {
+		screen: SearchNavigation,
+	},
+	Business: {
+		screen: BusinessScreen,
+	},
+	Events: {
+		screen: EventsScreen,
+	},
+});
 
 export default TabNavigator(
 	{
+		// Drawer: {
+		// 	screen: DrawerNavigation,
+		// 	navigationOptions: { tabBarVisible: false, header: null },
+		// },
 		Home: {
 			screen: HomeScreen,
 		},
 		News: {
-			screen: NewsScreen,
+			screen: NewsNavigation,
 		},
 		Search: {
-			screen: SearchScreen,
+			screen: SearchNavigation,
 		},
 		Business: {
 			screen: BusinessScreen,

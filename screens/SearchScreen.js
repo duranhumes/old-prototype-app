@@ -10,11 +10,15 @@ class SearchScreen extends Component {
 		header: null,
 	};
 
+	_handleNavigation = (value, data) => {
+		this.props.navigation.navigate(value, { ...data });
+	};
+
 	_renderTabs = () => {
 		return (
 			<Tabs renderTabBar={() => <ScrollableTab />}>
 				<Tab heading="Search">
-					<Search />
+					<Search go={this._handleNavigation} />
 				</Tab>
 				<Tab heading="What's Around Me">
 					<AroundMe />

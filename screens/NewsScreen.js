@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
 import { Container, Tab, Tabs, ScrollableTab, Text } from 'native-base';
+import { StackNavigator } from 'react-navigation';
 
 import { Head } from '../components/common';
 import { News } from '../components/views/news';
@@ -10,11 +11,15 @@ class NewsScreen extends Component {
 		header: null,
 	};
 
+	_handleNavigation = (value, data) => {
+		this.props.navigation.navigate(value, { ...data });
+	};
+
 	_renderTabs = () => {
 		return (
 			<Tabs renderTabBar={() => <ScrollableTab />}>
 				<Tab heading="News">
-					<Text>News</Text>
+					<News go={this._handleNavigation} />
 				</Tab>
 			</Tabs>
 		);

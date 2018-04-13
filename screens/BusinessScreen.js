@@ -14,7 +14,7 @@ class BusinessScreen extends Component {
 		return (
 			<Tabs renderTabBar={() => <ScrollableTab />}>
 				<Tab heading="Business">
-					<Text>Business</Text>
+					<Business />
 				</Tab>
 			</Tabs>
 		);

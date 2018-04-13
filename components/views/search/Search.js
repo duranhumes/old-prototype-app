@@ -8,11 +8,13 @@ const { width, height } = Dimensions.get('window');
 class Search extends Component {
 	state = { listings: [], query: '' };
 
-	componentWillMount() {}
-
 	componentDidMount() {
 		this._searchListings();
 	}
+
+	_handleNavigation = data => {
+		this.props.go('Listing', { ...data });
+	};
 
 	_searchListings = async val => {
 		this.setState({ query: val });
@@ -28,14 +30,14 @@ class Search extends Component {
 		return (
 			<Container>
 				<Content>
-					<Header searchBar rounded>
+					<Header searchBar>
 						<Item>
 							<Icon name="ios-search" />
-							<Input placeholder="Search Listings..." defaultValue={query} onChangeText={query => this._searchListings(query)} />
+							<Input placeholder="Search Listings..." defaultValue={query} onChangeText={query => this._searchListings(query)} clearButtonMode="always" style={styles.searchStyle} />
 						</Item>
 					</Header>
 					{listings.map(listing => (
-						<TouchableOpacity key={listing.id}>
+						<TouchableOpacity key={listing.id} onPress={() => this._handleNavigation(listing)}>
 							<Card>
 								<CardItem>
 									<Text>{listing.title}</Text>
@@ -55,6 +57,13 @@ class Search extends Component {
 	}
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+	searchStyle: {
+		// paddingVertical: 10,
+		// borderRadius: 100,
+		// height: 50,
+		// alignItems: 'center',
+	},
+});
 
 export { Search };

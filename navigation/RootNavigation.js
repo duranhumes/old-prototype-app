@@ -6,6 +6,7 @@ import { Text } from 'react-native';
 import MainTabNavigator from './MainTabNavigator';
 import MainDrawerNavigator from './MainDrawerNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
+import { News } from '../components/views/news';
 
 const RootStackNavigator = StackNavigator(
 	{

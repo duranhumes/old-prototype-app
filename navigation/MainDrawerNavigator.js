@@ -6,6 +6,8 @@ import { Icon } from 'native-base';
 
 import Colors from '../constants/Colors';
 
+import MainTabNavigator from './MainTabNavigator';
+
 import HomeScreen from '../screens/HomeScreen';
 import NewsScreen from '../screens/NewsScreen';
 import SearchScreen from '../screens/SearchScreen';
@@ -16,6 +18,8 @@ export default DrawerNavigator({
 	DrawerItem1: {
 		screen: HomeScreen,
 		navigationOptions: {
+			header: null,
+			headerMode: 'none',
 			drawerLabel: 'Alerts',
 			drawerIcon: ({ tintColor }) => <Icon name="home" size={24} />,
 		},
