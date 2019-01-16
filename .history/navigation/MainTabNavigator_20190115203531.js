@@ -86,12 +86,9 @@ export default TabNavigator(
                 const { routeName } = navigation.state
                 let iconName
                 switch (routeName) {
-                    case 'Home':
-                        iconName =
-                            Platform.OS === 'ios'
-                                ? `ios-home${focused ? '' : '-outline'}`
-                                : 'md-home'
-                        break
+                    // case 'Home':
+                    // 	iconName = Platform.OS === 'ios' ? `ios-home${focused ? '' : '-outline'}` : 'md-home';
+                    // 	break;
                     case 'News':
                         iconName =
                             Platform.OS === 'ios'
@@ -109,12 +106,9 @@ export default TabNavigator(
                             Platform.OS === 'ios'
                                 ? `ios-pin${focused ? '' : '-outline'}`
                                 : 'md-pin'
-                        break
-                    case 'Events':
-                        iconName =
-                            Platform.OS === 'ios'
-                                ? `ios-calendar${focused ? '' : '-outline'}`
-                                : 'md-calendar'
+                    // break;
+                    // case 'Events':
+                    // 	iconName = Platform.OS === 'ios' ? `ios-calendar${focused ? '' : '-outline'}` : 'md-calendar';
                 }
                 return (
                     <Ionicons

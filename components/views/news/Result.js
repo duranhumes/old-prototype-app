@@ -5,7 +5,7 @@ import { Container, Content, Card, CardItem, Grid, Row, Col, Button, Text, Icon,
 const VIEWPORT_WIDTH = Dimensions.get('window').width;
 const VIEWPORT_HEIGHT = Dimensions.get('window').height;
 
-class Post extends Component {
+class Result extends Component {
 	render() {
 		const { title, subtitle, body, image, date } = this.props.data.state.params;
 		const { header, dateStyle, imageStyle, titleStyle, titleContainer, contentStyle, subtitleStyle, bodyStyle } = styles;
@@ -82,4 +82,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export { Post };
+export { Result };

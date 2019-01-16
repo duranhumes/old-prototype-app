@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Dimensions, Image, Animated, TouchableHighlight, Alert } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Image, Animated, TouchableHighlight, TouchableOpacity, Alert } from 'react-native';
 import { Button, Picker, Form, Content, Icon } from 'native-base';
 import axios from 'axios';
 import { MapView, Constants, Location, Permissions } from 'expo';
 import call from 'react-native-phone-call';
+
+import { Spinner, CustomText } from '../../common';
 
 const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 };
 
@@ -12,7 +14,6 @@ const VIEWPORT_HEIGHT = Dimensions.get('window').height;
 
 const CARD_HEIGHT = VIEWPORT_HEIGHT / 8;
 const CARD_WIDTH = CARD_HEIGHT * 2;
-// const CARD_WIDTH = VIEWPORT_WIDTH / 1.1;
 const ASPECT_RATIO = VIEWPORT_WIDTH / VIEWPORT_HEIGHT;
 const LATITUDE_DELTA = 0.005;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -31,8 +32,10 @@ class AroundMe extends Component {
 		selectedCategory: 0,
 		distance: 1,
 		category: '',
+		isLoading: true,
 	};
 	componentWillMount() {
+		this._findMe();
 		this._getListings();
 		axios.get('https://duranhumes.com/api/mobile/categories').then(({ data }) => this.setState({ categories: data.data }));
 
@@ -47,8 +50,7 @@ class AroundMe extends Component {
 	_animateToListing = () => {
 		// Detect when scrolling has stopped then animate and debounce the event listener
 		this.animation.addListener(({ value }) => {
-			// let index = Math.floor(value / CARD_WIDTH * 0.35);
-			let index = Math.floor(value / CARD_WIDTH * 0.25);
+			let index = Math.floor(value / CARD_WIDTH + 0.3);
 			if (index >= this.state.markers.length) {
 				index = this.state.markers.length - 1;
 			}
@@ -61,17 +63,14 @@ class AroundMe extends Component {
 				if (this.index !== index) {
 					this.index = index;
 					const { latitude, longitude } = this.state.markers[index];
-					const coordinate = {
-						latitude,
-						longitude,
-					};
+					const coordinate = { latitude, longitude };
 					this.map.animateToRegion(
 						{
 							...coordinate,
 							latitudeDelta: this.state.region.latitudeDelta,
 							longitudeDelta: this.state.region.longitudeDelta,
 						},
-						250
+						350
 					);
 				}
 			}, 10);
@@ -80,24 +79,27 @@ class AroundMe extends Component {
 	};
 
 	_getListings = async () => {
-		await this._findMe();
-		let { latitude, longitude } = this.state.region;
 		let { distance, category } = this.state;
-		let url = `https://duranhumes.com/api/mobile/listing_distance?category=${category}&dist=${distance}&userLat=${latitude}&userLng=${longitude}`;
-		await axios.get(url).then(({ data }) => {
-			if (data.length == 0) Alert.alert('Nothing found with those parameters');
-			this.setState({ markers: data });
-		});
+		setTimeout(async () => {
+			let { latitude, longitude } = this.state.position;
+
+			let url = `https://duranhumes.com/api/mobile/listing_distance?category=${category}&dist=${distance}&userLat=${latitude}&userLng=${longitude}`;
+			await axios.get(url).then(({ data }) => {
+				if (data.length == 0) Alert.alert('Nothing found with those parameters');
+				this.setState({ markers: data, isLoading: false });
+			});
+			console.log(url);
+		}, 1000);
 	};
 
-	_categoryChange = value => {
-		this.setState({ selectedCategory: value, category: value });
-		this._getListings();
+	_categoryChange = async value => {
+		await this.setState({ selectedCategory: value, category: value, isLoading: true });
+		await this._getListings();
 	};
 
-	_distanceChange = value => {
-		this.setState({ distance: value });
-		this._getListings();
+	_distanceChange = async value => {
+		await this.setState({ distance: value, isLoading: true });
+		await this._getListings();
 	};
 
 	_findMe = () => {
@@ -112,8 +114,8 @@ class AroundMe extends Component {
 					region: {
 						latitude,
 						longitude,
-						latitudeDelta: 0.005,
-						longitudeDelta: 0.001,
+						latitudeDelta: LATITUDE_DELTA,
+						longitudeDelta: LONGITUDE_DELTA,
 					},
 				});
 			},
@@ -143,31 +145,38 @@ class AroundMe extends Component {
 		call(args).catch(console.error);
 	};
 
+	_handleNavigation = data => {
+		this.props.go('Result', { ...data });
+	};
+
 	render() {
 		const interpolations = this.state.markers.map((marker, index) => {
 			const inputRange = [(index - 1) * CARD_WIDTH, index * CARD_WIDTH, (index + 1) * CARD_WIDTH];
 			const scale = this.animation.interpolate({
 				inputRange,
-				outputRange: [1, 2, 1],
+				outputRange: [1, 2.5, 1],
 				extrapolate: 'clamp',
 			});
 			const opacity = this.animation.interpolate({
 				inputRange,
-				outputRange: [0.2, 1, 0.2],
+				outputRange: [0.35, 1, 0.35],
 				extrapolate: 'clamp',
 			});
 			return { scale, opacity };
 		});
+
 		const { card, textContent, cardTitle, cardDescription, markerIcon, markerWrap, ring, calloutText, scrollView, endPadding, container, filters, mapButton } = styles;
 
 		return (
 			<View style={container}>
+				{this.state.isLoading && <Spinner visible={this.state.isLoading} animation="fade" size="large" />}
 				<Form style={filters}>
 					<Picker
 						mode="dropdown"
 						iosHeader="Select a category"
 						placeholder="Select a category"
 						iosIcon={<Icon name="ios-arrow-down-outline" />}
+						headerBackButtonText={<Icon name="ios-close" style={{ fontSize: 38 }} />}
 						style={{ width: VIEWPORT_WIDTH / 1.75, marginRight: 10 }}
 						selectedValue={this.state.selectedCategory}
 						onValueChange={this._categoryChange}>
@@ -180,6 +189,7 @@ class AroundMe extends Component {
 						iosHeader="Select distance"
 						placeholder="Select distance"
 						iosIcon={<Icon name="ios-arrow-down-outline" />}
+						headerBackButtonText={<Icon name="ios-close" style={{ fontSize: 38 }} />}
 						style={{ width: VIEWPORT_WIDTH / 2.6, marginLeft: 10 }}
 						selectedValue={this.state.distance}
 						onValueChange={this._distanceChange}>
@@ -189,9 +199,9 @@ class AroundMe extends Component {
 						<Picker.Item label="10 Miles" value={10} />
 					</Picker>
 				</Form>
-				<Button style={mapButton} onPress={() => this._findMe()}>
+				<TouchableOpacity dark style={mapButton} onPress={() => this._findMe()}>
 					<Text style={{ fontWeight: 'bold', color: 'black' }}>Find Me</Text>
-				</Button>
+				</TouchableOpacity>
 				<MapView ref={map => (this.map = map)} region={this.state.region} showsUserLocation={true} onRegionChange={this._updateUserLocation()} style={container}>
 					{this.state.markers.map((marker, index) => {
 						const scaleStyle = {
@@ -211,9 +221,9 @@ class AroundMe extends Component {
 						};
 						return (
 							<MapView.Marker key={index} coordinate={coordinate}>
-								<Animated.View style={[markerWrap]}>
-									<Animated.View style={[ring]} />
-									<View style={markerIcon} />
+								<Animated.View style={[styles.markerWrap, opacityStyle]}>
+									<Animated.View style={[styles.ring, scaleStyle]} />
+									<View style={styles.markerIcon} />
 								</Animated.View>
 								<MapView.Callout>
 									<TouchableHighlight onPress={() => this.markerClick()} underlayColor="#dddddd">
@@ -221,6 +231,7 @@ class AroundMe extends Component {
 											<Text numberOfLines={1}>{marker.title}</Text>
 											<Text numberOfLines={1}>{marker.address}</Text>
 											<Text numberOfLines={1}>{marker.phone_number}</Text>
+											<Text numberOfLines={1}>{marker.distance.toFixed(2)} miles away</Text>
 										</View>
 									</TouchableHighlight>
 								</MapView.Callout>
@@ -250,7 +261,7 @@ class AroundMe extends Component {
 					{this.state.markers.map((marker, index) => {
 						const { phone_number, title, address } = marker;
 						return (
-							<TouchableHighlight style={card} key={index}>
+							<TouchableHighlight style={card} key={index} onPress={() => this._handleNavigation(marker)}>
 								<View style={textContent}>
 									<Text numberOfLines={1} style={cardTitle}>
 										{title}
@@ -351,9 +362,6 @@ const styles = StyleSheet.create({
 		width: VIEWPORT_WIDTH,
 		flexDirection: 'row',
 		backgroundColor: 'rgba(252, 253, 253, 0.9)',
-		shadowColor: 'black',
-		shadowRadius: 8,
-		shadowOpacity: 0.12,
 		opacity: 0.6,
 		elevation: 2,
 		zIndex: 10,

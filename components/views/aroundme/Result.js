@@ -5,7 +5,7 @@ import { Container, Content, Card, CardItem, Grid, Row, Col, Button, Text, Icon,
 const VIEWPORT_WIDTH = Dimensions.get('window').width;
 const VIEWPORT_HEIGHT = Dimensions.get('window').height;
 
-class Listing extends Component {
+class Result extends Component {
 	render() {
 		const { title, address, website, image, distance, phone_number, email, description, island } = this.props.data.state.params;
 		const { header, distanceStyle, imageStyle, titleStyle, titleContainer, descriptionStyle, subTextStyle, descriptionContainerStyle } = styles;
@@ -83,4 +83,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export { Listing };
+export { Result };

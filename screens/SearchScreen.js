@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
 import { Container, Tab, Tabs, ScrollableTab, Text } from 'native-base';
+import axios from 'axios';
 
-import { Head } from '../components/common';
-import { Search, AroundMe } from '../components/views/search';
+import { IOSHeader, Spinner } from '../components/common';
+import { Search } from '../components/views/search';
 
 class SearchScreen extends Component {
+	state = { list: [], isLoading: true, input: '' };
+
 	static navigationOptions = {
 		header: null,
+	};
+
+	_getListings = async () => {
+		let url = 'https://duranhumes.com/api/mobile/listings';
+		await axios.get(url).then(({ data }) => this.setState({ list: data }));
+		setTimeout(() => this.setState({ isLoading: false }), 800);
 	};
 
 	_handleNavigation = (value, data) => {
@@ -15,22 +24,41 @@ class SearchScreen extends Component {
 	};
 
 	_renderTabs = () => {
-		return (
-			<Tabs renderTabBar={() => <ScrollableTab />}>
-				<Tab heading="Search">
-					<Search go={this._handleNavigation} />
-				</Tab>
-				<Tab heading="What's Around Me">
-					<AroundMe />
-				</Tab>
-			</Tabs>
-		);
+		return <Search go={this._handleNavigation} data={this.state.list} />;
 	};
+
+	_setInput = input => {
+		this.setState({ input });
+	};
+
+	_handleSearch = data => {
+		console.log(this.state.input);
+		console.log('hit', data);
+		// setTimeout(() => this.setState({ list: data }), 450);
+	};
+
+	componentWillMount() {
+		this._getListings();
+	}
+
+	componentWillBlur() {
+		clearTimeout();
+	}
 
 	render() {
 		return (
 			<Container>
-				<Head tabs={this._renderTabs()} />
+				{this.state.isLoading && <Spinner visible={this.state.isLoading} animation="fade" size="large" />}
+				<IOSHeader
+					title="Search"
+					tabs={this._renderTabs()}
+					go={this.props.navigation}
+					placeholder="Search..."
+					data={this.state.list}
+					text={this._setInput}
+					search={this._handleSearch}
+					hasSearch
+				/>
 			</Container>
 		);
 	}
@@ -43,4 +71,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default SearchScreen;
+export { SearchScreen };

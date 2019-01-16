@@ -3,15 +3,15 @@ import { StyleSheet, Image } from 'react-native';
 import { Container, Tab, Tabs, ScrollableTab, Text } from 'native-base';
 import { StackNavigator } from 'react-navigation';
 
-import { StackHeader } from '../components/common';
-import { Post } from '../components/views/news';
+import { IOSResultHeader } from '../components/common';
+import { Result } from '../components/views/events';
 
-class PostScreen extends Component {
+class EventResultScreen extends Component {
 	static navigationOptions = {
 		header: null,
 	};
 
-	state = { title: 'Post' };
+	state = { title: 'Result' };
 
 	_handleBack = value => {
 		if (value == 'back') this.props.navigation.goBack();
@@ -21,7 +21,7 @@ class PostScreen extends Component {
 		const { title } = this.props.navigation.state.params;
 		return (
 			<Container>
-				<StackHeader title={title} content={<Post data={this.props.navigation} />} go={this._handleBack} />
+				<IOSResultHeader title={title} content={<Result data={this.props.navigation} />} go={this._handleBack} />
 			</Container>
 		);
 	}
@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default PostScreen;
+export { EventResultScreen };

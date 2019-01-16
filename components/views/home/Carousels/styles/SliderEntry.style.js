@@ -1,4 +1,5 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { colors } from './index.style';
 
 const IS_IOS = Platform.OS === 'ios';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -30,7 +31,7 @@ export default StyleSheet.create({
 		left: itemHorizontalMargin,
 		right: itemHorizontalMargin,
 		bottom: 18,
-		shadowColor: '#000',
+		shadowColor: colors.black,
 		shadowOpacity: 0.25,
 		shadowOffset: { width: 0, height: 10 },
 		shadowRadius: 10,
@@ -44,7 +45,7 @@ export default StyleSheet.create({
 		borderTopRightRadius: entryBorderRadius,
 	},
 	imageContainerEven: {
-		backgroundColor: '#000',
+		backgroundColor: colors.black,
 	},
 	image: {
 		...StyleSheet.absoluteFillObject,
@@ -63,7 +64,7 @@ export default StyleSheet.create({
 		backgroundColor: 'white',
 	},
 	radiusMaskEven: {
-		backgroundColor: '#000',
+		backgroundColor: colors.black,
 	},
 	textContainer: {
 		justifyContent: 'center',
@@ -75,20 +76,20 @@ export default StyleSheet.create({
 		borderBottomRightRadius: entryBorderRadius,
 	},
 	textContainerEven: {
-		backgroundColor: '#000',
+		backgroundColor: colors.black,
 	},
 	title: {
-		color: '#000',
+		color: colors.black,
 		fontSize: 13,
 		fontWeight: 'bold',
 		letterSpacing: 0.5,
 	},
 	titleEven: {
-		color: '#eee',
+		color: 'white',
 	},
 	subtitle: {
 		marginTop: 6,
-		color: '#000',
+		color: colors.gray,
 		fontSize: 12,
 		fontStyle: 'italic',
 	},

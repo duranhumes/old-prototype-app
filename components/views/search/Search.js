@@ -1,56 +1,54 @@
 import React, { Component } from 'react';
-import { StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Grid, Row, Col, Button, Form, Text, Input, Item, Icon, Body, Left, Right } from 'native-base';
+import { StyleSheet, Dimensions, TouchableOpacity, Text, Alert, View } from 'react-native';
+import { Container, Header, Content, Card, CardItem, Grid, Row, Col, Button, Icon, Body, Left, Right } from 'native-base';
 import axios from 'axios';
 
-const { width, height } = Dimensions.get('window');
+import { CustomText, CustomList } from '../../common';
+
+const VIEWPORT_WIDTH = Dimensions.get('window').width;
+const VIEWPORT_HEIGHT = Dimensions.get('window').height;
 
 class Search extends Component {
-	state = { listings: [], query: '' };
-
-	componentDidMount() {
-		this._searchListings();
-	}
+	state = { query: '' };
 
 	_handleNavigation = data => {
-		this.props.go('Listing', { ...data });
+		this.props.go('Result', { ...data });
 	};
 
 	_searchListings = async val => {
-		this.setState({ query: val });
+		await this.setState({ query: val, isLoading: true });
 		const { query, listings } = this.state;
 		if (query !== '') {
 			let url = `https://duranhumes.com/api/mobile/listing_search?query=${query}`;
-			await axios.get(url).then(({ data }) => this.setState({ listings: data }));
+			await axios
+				.get(url)
+				.then(({ data }) => this.setState({ listings: data }))
+				.catch(err => Alert.alert(err));
+			setTimeout(() => this.setState({ isLoading: false }), 800);
 		}
 	};
 
 	render() {
-		let { query, listings } = this.state;
+		let { data } = this.props;
 		return (
 			<Container>
 				<Content>
-					<Header searchBar>
-						<Item>
-							<Icon name="ios-search" />
-							<Input placeholder="Search Listings..." defaultValue={query} onChangeText={query => this._searchListings(query)} clearButtonMode="always" style={styles.searchStyle} />
-						</Item>
-					</Header>
-					{listings.map(listing => (
-						<TouchableOpacity key={listing.id} onPress={() => this._handleNavigation(listing)}>
-							<Card>
-								<CardItem>
-									<Text>{listing.title}</Text>
-								</CardItem>
-								<CardItem>
-									<Text>{listing.address}</Text>
-								</CardItem>
-								<CardItem>
-									<Text>{listing.phone_number}</Text>
-								</CardItem>
-							</Card>
-						</TouchableOpacity>
-					))}
+					{data &&
+						data.map(item => (
+							<TouchableOpacity key={item.id} onPress={() => this._handleNavigation(item)}>
+								<Card>
+									<CardItem>
+										<CustomText>{item.title}</CustomText>
+									</CardItem>
+									<CardItem>
+										<CustomText>{item.address}</CustomText>
+									</CardItem>
+									<CardItem>
+										<CustomText>{item.phone_number}</CustomText>
+									</CardItem>
+								</Card>
+							</TouchableOpacity>
+						))}
 				</Content>
 			</Container>
 		);

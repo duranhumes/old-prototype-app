@@ -1,2 +1,2 @@
 export * from './News';
-export * from './Post';
+export * from './Result';
